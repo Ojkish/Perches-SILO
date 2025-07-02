@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perches SILO - Distance entre Objets</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+      margin: 0;
+    }
+    .main-title {
+      font-size: 28px;
+      color: #8a72a6;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .container {
+      background: rgb(159, 149, 203);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 320px;
+    }
+    .field {
+      margin: 10px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #fff;
+      font-weight: bold;
+    }
+    select {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      border: 2px solid #8a72a6;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    select:hover {
+      background: #765c7c;
+      color: white;
+    }
+    .result-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .result {
+      font-size: 32px;
+      font-weight: bold;
+      color: #fff;
+      background: #8a72a6;
+      padding: 15px;
+      border-radius: 8px;
+      display: inline-block;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      max-width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="main-title">Perches SILO</h1>
+  <div class="container">
+    <h2>Distance entre Objets</h2>
+    <div class="field">
+      <label for="sourceSelect">Source</label>
+      <select id="sourceSelect">
+        <option value="">-- Choisissez --</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="cibleSelect">Cible</label>
+      <select id="cibleSelect">
+        <option value="">-- Choisissez --</option>
+      </select>
+    </div>
+    <div class="result-container">
+      <div class="result" id="result">-</div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration des objets et distances (en mètres)
+    const objets = [
+      { nom: 'Nez de scène 15m40', dist: 0 },
+      { nom: 'Perche 1', dist: 0.3 },
+      { nom: 'Perche 2', dist: 1.1 },
+      { nom: 'Perche 3', dist: 1.5 },
+      { nom: 'Perche 4', dist: 1.9 },
+      { nom: 'Nez de scène 12m40', dist: 3.0 },
+      { nom: 'Perche 5', dist: 3.1 },
+      { nom: 'Perche 6', dist: 4.3 },
+      { nom: 'Perche 7', dist: 4.7 },
+      { nom: 'Perche 8', dist: 5.5 },
+      { nom: 'Perche 9', dist: 5.9 },
+      { nom: 'Perche 10', dist: 6.9 },
+      { nom: 'Perche 11', dist: 7.3 },
+      { nom: 'Perche 12', dist: 8.1 },
+      { nom: 'Perche 13', dist: 8.9 },
+      { nom: 'Perche 14', dist: 9.3 },
+      { nom: 'Perche 15', dist: 10.5 },
+      { nom: 'Perche 16', dist: 11.7 },
+      { nom: 'Perche 17', dist: 12.7 },
+      { nom: 'Perche 18', dist: 13.5 },
+      { nom: 'Perche 19', dist: 13.9 },
+      { nom: 'Perche 20', dist: 14.9 },
+      { nom: 'Perche 21', dist: 15.1 },
+      { nom: 'Fond de scène', dist: 15.4 }
+    ];
+
+    function remplirSelect(selectId) {
+      const sel = document.getElementById(selectId);
+      sel.innerHTML = '<option value="">-- Choisissez --</option>';
+      objets.forEach(obj => {
+        const opt = document.createElement('option');
+        opt.value = obj.dist;
+        opt.textContent = obj.nom;
+        sel.appendChild(opt);
+      });
+    }
+
+    function calculerDistance() {
+      const srcVal = document.getElementById('sourceSelect').value;
+      const tgtVal = document.getElementById('cibleSelect').value;
+      const res = document.getElementById('result');
+      const src = parseFloat(srcVal);
+      const tgt = parseFloat(tgtVal);
+
+      if (!isNaN(src) && !isNaN(tgt)) {
+        const diff = Math.abs(tgt - src).toFixed(2);
+        res.textContent = diff + ' m';
+      } else {
+        res.textContent = '-';
+      }
+    }
+
+    // Initialisation
+    remplirSelect('sourceSelect');
+    remplirSelect('cibleSelect');
+
+    // Valeur par défaut pour le menu Source
+    const defaultSrc = objets.find(o => o.nom === 'Nez de scène 12m40');
+    if (defaultSrc) {
+      document.getElementById('sourceSelect').value = defaultSrc.dist;
+    }
+
+    // Événements
+    document.getElementById('sourceSelect').addEventListener('change', calculerDistance);
+    document.getElementById('cibleSelect').addEventListener('change', calculerDistance);
+  </script>
+</body>
+</html>
