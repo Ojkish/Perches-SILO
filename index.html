@@ -92,71 +92,64 @@
   </div>
 
   <script>
-    // Configuration des objets et distances (en mètres)
+    // Positions des objets en mètres, avec origine au Nez de scène 12,40 m
     const objets = [
-      { nom: 'Nez de scène 15m40', dist: 0 },
-      { nom: 'Perche 1', dist: 0.3 },
-      { nom: 'Perche 2', dist: 1.1 },
-      { nom: 'Perche 3', dist: 1.5 },
-      { nom: 'Perche 4', dist: 1.9 },
-      { nom: 'Nez de scène 12m40', dist: 3.0 },
-      { nom: 'Perche 5', dist: 3.1 },
-      { nom: 'Perche 6', dist: 4.3 },
-      { nom: 'Perche 7', dist: 4.7 },
-      { nom: 'Perche 8', dist: 5.5 },
-      { nom: 'Perche 9', dist: 5.9 },
-      { nom: 'Perche 10', dist: 6.9 },
-      { nom: 'Perche 11', dist: 7.3 },
-      { nom: 'Perche 12', dist: 8.1 },
-      { nom: 'Perche 13', dist: 8.9 },
-      { nom: 'Perche 14', dist: 9.3 },
-      { nom: 'Perche 15', dist: 10.5 },
-      { nom: 'Perche 16', dist: 11.7 },
-      { nom: 'Perche 17', dist: 12.7 },
-      { nom: 'Perche 18', dist: 13.5 },
-      { nom: 'Perche 19', dist: 13.9 },
-      { nom: 'Perche 20', dist: 14.9 },
-      { nom: 'Perche 21', dist: 15.1 },
-      { nom: 'Fond de scène', dist: 15.4 }
+      { nom: 'Passerelle 2', dist: -23.20 },
+      { nom: 'Passerelle 1', dist: -18.70 },
+      { nom: 'Nez de scène 15m40', dist: -3.00 },
+      { nom: 'Perche 1', dist: -2.70 },
+      { nom: 'Perche 2', dist: -1.90 },
+      { nom: 'Perche 3', dist: -1.50 },
+      { nom: 'Perche 4', dist: -1.10 },
+      { nom: 'Nez de scène 12m40', dist:  0.00 },
+      { nom: 'Perche 5', dist:  0.10 },
+      { nom: 'Perche 6', dist:  1.30 },
+      { nom: 'Perche 7', dist:  1.70 },
+      { nom: 'Perche 8', dist:  2.50 },
+      { nom: 'Perche 9', dist:  2.90 },
+      { nom: 'Perche 10', dist:  3.90 },
+      { nom: 'Perche 11', dist:  4.30 },
+      { nom: 'Perche 12', dist:  5.10 },
+      { nom: 'Perche 13', dist:  5.90 },
+      { nom: 'Perche 14', dist:  6.30 },
+      { nom: 'Perche 15', dist:  7.50 },
+      { nom: 'Perche 16', dist:  8.70 },
+      { nom: 'Perche 17', dist:  9.70 },
+      { nom: 'Perche 18', dist: 10.50 },
+      { nom: 'Perche 19', dist: 10.90 },
+      { nom: 'Perche 20', dist: 11.90 },
+      { nom: 'Perche 21', dist: 12.10 },
+      { nom: 'Fond de scène', dist: 12.40 }
     ];
 
-    function remplirSelect(selectId) {
-      const sel = document.getElementById(selectId);
+    function remplirSelect(id) {
+      const sel = document.getElementById(id);
       sel.innerHTML = '<option value="">-- Choisissez --</option>';
-      objets.forEach(obj => {
+      objets.forEach(o => {
         const opt = document.createElement('option');
-        opt.value = obj.dist;
-        opt.textContent = obj.nom;
+        opt.value = o.dist;
+        opt.textContent = o.nom;
         sel.appendChild(opt);
       });
     }
 
     function calculerDistance() {
-      const srcVal = document.getElementById('sourceSelect').value;
-      const tgtVal = document.getElementById('cibleSelect').value;
-      const res = document.getElementById('result');
-      const src = parseFloat(srcVal);
-      const tgt = parseFloat(tgtVal);
-
-      if (!isNaN(src) && !isNaN(tgt)) {
-        const diff = Math.abs(tgt - src).toFixed(2);
-        res.textContent = diff + ' m';
+      const s = parseFloat(document.getElementById('sourceSelect').value);
+      const c = parseFloat(document.getElementById('cibleSelect').value);
+      const r = document.getElementById('result');
+      if (!isNaN(s) && !isNaN(c)) {
+        r.textContent = Math.abs(c - s).toFixed(2) + ' m';
       } else {
-        res.textContent = '-';
+        r.textContent = '-';
       }
     }
 
     // Initialisation
     remplirSelect('sourceSelect');
     remplirSelect('cibleSelect');
+    // Valeur par défaut : Nez de scène 12m40 à 0
+    document.getElementById('sourceSelect').value = 0;
 
-    // Valeur par défaut pour le menu Source
-    const defaultSrc = objets.find(o => o.nom === 'Nez de scène 12m40');
-    if (defaultSrc) {
-      document.getElementById('sourceSelect').value = defaultSrc.dist;
-    }
-
-    // Événements
     document.getElementById('sourceSelect').addEventListener('change', calculerDistance);
     document.getElementById('cibleSelect').addEventListener('change', calculerDistance);
   </script>
