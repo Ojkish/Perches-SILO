@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perches SILO - Distance entre Objets</title>
+  <title>Perches SILO - Assistant Implantation</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background-color: #f4f4f4;
       margin: 0;
+      padding: 20px;
     }
     .main-title {
       font-size: 28px;
@@ -21,78 +21,229 @@
       margin-bottom: 20px;
       text-transform: uppercase;
       letter-spacing: 1px;
+      text-align: center;
     }
+    
+    .tools-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+    }
+
     .container {
       background: rgb(159, 149, 203);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
       text-align: center;
       width: 320px;
+      flex: 1 1 300px;
+      overflow: hidden; 
     }
+
+    h2 {
+      color: #fff;
+      font-size: 20px;
+      margin-top: 0;
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      padding-bottom: 10px;
+    }
+
     .field {
-      margin: 10px 0;
+      margin: 15px 0;
+      text-align: left;
     }
+    
     label {
       display: block;
       margin-bottom: 5px;
       color: #fff;
       font-weight: bold;
+      font-size: 14px;
     }
-    select {
+
+    select, input[type="number"] {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       font-size: 16px;
-      border: 2px solid #8a72a6;
+      border: none;
       border-radius: 5px;
       background: white;
+      box-sizing: border-box;
+    }
+    
+    select:focus, input:focus {
+      outline: 2px solid #5a4276;
+    }
+
+    /* Styles pour le switch de direction */
+    .direction-switch {
+      display: flex;
+      background: rgba(255,255,255,0.2);
+      border-radius: 5px;
+      padding: 4px;
+      gap: 5px;
+    }
+    .direction-switch input[type="radio"] {
+      display: none;
+    }
+    .direction-switch label {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      margin: 0;
+      background: transparent;
+      color: #eee;
       cursor: pointer;
-      transition: 0.3s;
+      border-radius: 4px;
+      transition: 0.2s;
+      font-weight: normal;
     }
-    select:hover {
-      background: #765c7c;
-      color: white;
+    .direction-switch input[type="radio"]:checked + label {
+      background: #5a4276;
+      color: #fff;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
+
     .result-container {
       margin-top: 20px;
       text-align: center;
     }
+
     .result {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: bold;
-      color: #fff;
-      background: #8a72a6;
+      color: #5a4276;
+      background: #fdfdfd;
       padding: 15px;
       border-radius: 8px;
-      display: inline-block;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      display: block;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Liste des résultats de recherche */
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+      align-items: flex-end; 
+      padding: 0 10px; 
+    }
+    
+    .search-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      padding: 12px 15px;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 5px solid #ccc; 
+      transition: width 0.4s ease-out; 
+      
+      width: var(--relevance-width, 100%); 
       max-width: 100%;
+      min-width: 70%; /* Minimum pour la lisibilité */
+    }
+    
+    .search-card.best-match {
+      border-left: 5px solid #ccc; 
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transform: none; 
+      /* Correction: Suppression de width: 100% ici, la largeur est gérée par la variable CSS --relevance-width */
+    }
+
+    .card-info strong {
+      display: block;
+      color: #333;
+      font-size: 18px;
+    }
+    
+    .card-delta {
+      text-align: right;
+    }
+    .delta-val {
+      font-weight: bold;
+      font-size: 15px;
+      display: block;
+      color: #c0392b; 
+    }
+    .delta-exact {
+        font-weight: bold;
+        font-size: 15px;
+        color: #27ae60; 
+    }
+    .delta-direction {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <h1 class="main-title">Perches SILO</h1>
-  <div class="container">
-    <h2>Distance entre Objets</h2>
-    <div class="field">
-      <label for="sourceSelect">Source</label>
-      <select id="sourceSelect">
-        <option value="">-- Choisissez --</option>
-      </select>
+
+  <h1 class="main-title">Ecarts Perches SILO</h1>
+
+  <div class="tools-wrapper">
+    
+    <div class="container">
+      <h2>📏 Distance entre 2 points</h2>
+      <div class="field">
+        <label for="sourceSelect">Point A (Source)</label>
+        <select id="sourceSelect"></select>
+      </div>
+      <div class="field">
+        <label for="cibleSelect">Point B (Cible)</label>
+        <select id="cibleSelect"></select>
+      </div>
+      <div class="result-container">
+        <label>Ecart</label>
+        <div class="result" id="resultDistance">-</div>
+      </div>
     </div>
-    <div class="field">
-      <label for="cibleSelect">Cible</label>
-      <select id="cibleSelect">
-        <option value="">-- Choisissez --</option>
-      </select>
+
+    <div class="container">
+      <h2>🔍 Trouver une perche</h2>
+      
+      <div class="field">
+        <label for="refSelect">Partir de (Référence)</label>
+        <select id="refSelect"></select>
+      </div>
+      
+      <div class="field">
+        <label>Direction</label>
+        <div class="direction-switch">
+          <input type="radio" name="direction" id="dirFace" value="-1">
+          <label for="dirFace">Vers la Face (-)</label>
+          
+          <input type="radio" name="direction" id="dirLointain" value="1" checked>
+          <label for="dirLointain">Vers le Lointain (+)</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="inputDist">Distance (m)</label>
+        <input type="number" id="inputDist" step="0.10" min="0" placeholder="Ex: 2.00">
+      </div>
+      
+      <div id="searchResults" class="results-list">
+        <div style="color: rgba(255,255,255,0.7); font-style: italic; font-size: 14px;">
+          Définissez une référence et une distance pour voir les propositions.
+        </div>
+      </div>
     </div>
-    <div class="result-container">
-      <div class="result" id="result">-</div>
-    </div>
+
   </div>
 
   <script>
-    // Positions des objets en mètres, avec origine au Nez de scène 12,40 m
+    // --- DONNÉES ---
+    // Négatif = Vers la salle (Face), Positif = Vers le lointain
     const objets = [
       { nom: 'Passerelle 2', dist: -23.20 },
       { nom: 'Passerelle 1', dist: -18.70 },
@@ -101,7 +252,7 @@
       { nom: 'Perche 2', dist: -1.90 },
       { nom: 'Perche 3', dist: -1.50 },
       { nom: 'Perche 4', dist: -1.10 },
-      { nom: 'Nez de scène 12m40', dist:  0.00 },
+      { nom: 'Nez de scène 12m40', dist:  0.00 }, // Index 7
       { nom: 'Perche 5', dist:  0.10 },
       { nom: 'Perche 6', dist:  1.30 },
       { nom: 'Perche 7', dist:  1.70 },
@@ -122,36 +273,160 @@
       { nom: 'Fond de scène', dist: 12.40 }
     ];
 
-    function remplirSelect(id) {
-      const sel = document.getElementById(id);
-      sel.innerHTML = '<option value="">-- Choisissez --</option>';
-      objets.forEach(o => {
-        const opt = document.createElement('option');
-        opt.value = o.dist;
-        opt.textContent = o.nom;
-        sel.appendChild(opt);
+    // --- FONCTIONS UTILITAIRES ---
+    function remplirSelects() {
+      const selects = ['sourceSelect', 'cibleSelect', 'refSelect'];
+      selects.forEach(id => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = '<option value="">-- Sélectionner --</option>';
+        objets.forEach((o, index) => {
+          const opt = document.createElement('option');
+          opt.value = index;
+          opt.textContent = o.nom;
+          sel.appendChild(opt);
+        });
       });
     }
 
+    // --- OUTIL 1 : Distance simple ---
     function calculerDistance() {
-      const s = parseFloat(document.getElementById('sourceSelect').value);
-      const c = parseFloat(document.getElementById('cibleSelect').value);
-      const r = document.getElementById('result');
-      if (!isNaN(s) && !isNaN(c)) {
-        r.textContent = Math.abs(c - s).toFixed(2) + ' m';
+      const idxA = document.getElementById('sourceSelect').value;
+      const idxB = document.getElementById('cibleSelect').value;
+      const r = document.getElementById('resultDistance');
+
+      if (idxA !== "" && idxB !== "") {
+        const diff = Math.abs(objets[idxB].dist - objets[idxA].dist);
+        r.textContent = diff.toFixed(2) + ' m';
       } else {
         r.textContent = '-';
       }
     }
 
-    // Initialisation
-    remplirSelect('sourceSelect');
-    remplirSelect('cibleSelect');
-    // Valeur par défaut : Nez de scène 12m40 à 0
-    document.getElementById('sourceSelect').value = 0;
+    // --- OUTIL 2 : Recherche multi-résultats ---
+    function rechercherObjets() {
+      const idxRef = document.getElementById('refSelect').value;
+      const distInput = parseFloat(document.getElementById('inputDist').value);
+      const direction = parseInt(document.querySelector('input[name="direction"]:checked').value);
+      const output = document.getElementById('searchResults');
 
+      if (idxRef === "" || isNaN(distInput)) {
+        output.innerHTML = `<div style="color: rgba(255,255,255,0.7); font-style: italic; font-size: 14px;">Définissez une référence et une distance pour voir les propositions.</div>`;
+        return; 
+      }
+
+      const refObj = objets[idxRef];
+      // Cible idéale
+      const targetCoord = refObj.dist + (distInput * direction);
+
+      // Calcul des deltas
+      let candidats = objets.map(o => {
+        // Delta simple : Position Objet - Cible Théorique
+        const delta = o.dist - targetCoord;
+        return {
+          ...o,
+          delta: delta,
+          absDelta: Math.abs(delta)
+        };
+      });
+
+      // Tri par proximité absolue
+      candidats.sort((a, b) => a.absDelta - b.absDelta);
+
+      // Top 6
+      const top6 = candidats.slice(0, 6);
+      
+      // Trouver le delta max parmi les 6 pour la mise à l'échelle
+      const maxDelta = Math.max(...top6.map(c => c.absDelta));
+      const MIN_WIDTH_PERCENT = 70; // Largeur minimale pour la carte la moins pertinente
+
+      let html = '';
+      
+      top6.forEach((c, index) => {
+        const isBest = index === 0;
+        
+        // Calcul de la largeur proportionnelle
+        let widthPercent = 100;
+
+        // Si le meilleur résultat a un écart de 0.05m, et le maxDelta est 0.50m.
+        // On veut que l'écart (absDelta) soit représenté par une réduction de la largeur.
+        
+        if (maxDelta > 0.01) {
+            // Nouvelle formule pour que l'écart 0 donne 100% et l'écart max donne MIN_WIDTH_PERCENT
+            const normalizedDelta = c.absDelta / maxDelta; 
+            widthPercent = 100 - (normalizedDelta * (100 - MIN_WIDTH_PERCENT));
+        }
+
+        // Logique d'affichage du Delta
+        let deltaText = "";
+        let directionText = "";
+        
+        if (c.absDelta < 0.01) {
+            deltaText = "PARFAIT";
+            directionText = "Position Exacte";
+            widthPercent = 100; // La perfection est toujours 100% visuellement
+            
+            html += `
+                <div class="search-card ${isBest ? 'best-match' : ''}" style="--relevance-width: 100%;">
+                    <div class="card-info"><strong>${c.nom}</strong></div>
+                    <div class="card-delta">
+                        <span class="delta-exact">${deltaText}</span>
+                        <span class="delta-direction">${directionText}</span>
+                    </div>
+                </div>`;
+            return; 
+        } else if (c.delta > 0) {
+            // Positif = Vers le lointain par rapport à la cible
+            deltaText = `+ ${c.absDelta.toFixed(2)} m`;
+            directionText = "VERS LOINTAIN";
+        } else {
+            // Négatif = Vers la face par rapport à la cible
+            deltaText = `- ${c.absDelta.toFixed(2)} m`;
+            directionText = "VERS FACE";
+        }
+        
+        html += `
+          <div class="search-card ${isBest ? 'best-match' : ''}" style="--relevance-width: ${widthPercent.toFixed(2)}%;">
+            <div class="card-info">
+              <strong>${c.nom}</strong>
+            </div>
+            <div class="card-delta">
+              <span class="delta-val">${deltaText}</span>
+              <span class="delta-direction">${directionText}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      output.innerHTML = html;
+    }
+
+    // --- INIT ---
+    const NEZ_SCENE_12M40_INDEX = 7; // Index de 'Nez de scène 12m40' (à 0.00m)
+
+    remplirSelects();
+
+    // Initialisation des valeurs par défaut
+    document.getElementById('sourceSelect').value = NEZ_SCENE_12M40_INDEX; 
+    document.getElementById('refSelect').value = NEZ_SCENE_12M40_INDEX;
+    document.getElementById('inputDist').value = 2.00;
+    
+    // Écouteurs d'événements
     document.getElementById('sourceSelect').addEventListener('change', calculerDistance);
     document.getElementById('cibleSelect').addEventListener('change', calculerDistance);
+    
+    const searchInputs = [
+      document.getElementById('refSelect'),
+      document.getElementById('inputDist'),
+      document.getElementById('dirFace'),
+      document.getElementById('dirLointain')
+    ];
+    searchInputs.forEach(el => el.addEventListener('change', rechercherObjets));
+    document.getElementById('inputDist').addEventListener('input', rechercherObjets);
+
+    // Lancement du premier calcul pour afficher les résultats par défaut
+    calculerDistance();
+    rechercherObjets();
+
   </script>
 </body>
 </html>
